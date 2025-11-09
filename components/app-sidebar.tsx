@@ -41,44 +41,34 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "#",
+          url: "/dashboard",
           icon: RiSlowDownLine,
           isActive: true,
         },
         {
-          title: "Transactions",
+          title: "DNS Engine",
           url: "#",
           icon: RiLeafLine,
         },
         {
-          title: "Metrics",
+          title: "Policies",
           url: "#",
           icon: RiNavigationLine,
         },
         {
-          title: "Security",
+          title: "Blocklists",
           url: "#",
-          icon: RiSpeakLine,
+          icon: RiDatabase2Line,
         },
         {
-          title: "API",
-          url: "#",
-          icon: RiCodeSSlashLine,
-        },
-        {
-          title: "Quick Setup",
+          title: "Logs",
           url: "#",
           icon: RiGeminiLine,
         },
         {
-          title: "Payment Links",
+          title: "Settings",
           url: "#",
-          icon: RiLinksLine,
-        },
-        {
-          title: "Archive",
-          url: "#",
-          icon: RiDatabase2Line,
+          icon: RiCodeSSlashLine,
         },
       ],
     },
