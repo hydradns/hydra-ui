@@ -1,5 +1,3 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
-
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -8,69 +6,92 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useDashboardData } from "@/app/dashboard/useDashboardData"
+import { Ban, Globe, Shield, TrendingUp, Zap } from "lucide-react";
+
+function CardIcon({ bgClass, children }: { bgClass: string; children: React.ReactNode }) {
+  return (
+    <div className={"rounded-lg p-3 " + bgClass}>
+      <div className="w-6 h-6 text-white">{children}</div>
+    </div>
+  )
+}
 
 export function SectionCards() {
+  const { data } = useDashboardData()
+
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
-          </CardTitle>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <CardIcon bgClass="bg-gradient-to-tr from-sky-500 to-indigo-500">
+                <Globe />
+              </CardIcon>
+              <div>
+                <CardDescription>Total Queries</CardDescription>
+                <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl">
+                  {(data?.total_queries ?? 0).toLocaleString()}
+                </CardTitle>
+              </div>
+            </div>
+          </div>
         </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Trending up this month <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
-        </CardFooter>
       </Card>
+
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>New Customers</CardDescription>
-          <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl">
-            1,234
-          </CardTitle>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <CardIcon bgClass="bg-gradient-to-tr from-emerald-400 to-emerald-500">
+                <Shield />
+              </CardIcon>
+              <div>
+                <CardDescription>Blocked Queries</CardDescription>
+                <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl flex items-center gap-2">
+                  {(data?.blocked_queries ?? 0).toLocaleString()}
+                </CardTitle>
+              </div>
+            </div>
+          </div>
         </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period <IconTrendingDown className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
-        </CardFooter>
       </Card>
+
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
-          <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl">
-            45,678
-          </CardTitle>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention <IconTrendingUp className="size-4" />
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <CardIcon bgClass="bg-gradient-to-tr from-orange-400 to-rose-500">
+                <Zap />
+              </CardIcon>
+              <div>
+                <CardDescription>Query Speed</CardDescription>
+                <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl">
+                  {(data?.avg_query_time_ms ?? 0).toLocaleString()} ms
+                </CardTitle>
+              </div>
+            </div>
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
-        </CardFooter>
+        </CardHeader>
       </Card>
+
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
-          <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl">
-            4.5%
-          </CardTitle>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase <IconTrendingUp className="size-4" />
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <CardIcon bgClass="bg-gradient-to-tr from-pink-400 to-fuchsia-500">
+                <Ban />
+              </CardIcon>
+              <div>
+                <CardDescription>Block Rate</CardDescription>
+                <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl">
+                  {((data?.block_rate_percent ?? 0) as number).toFixed(2)}%
+                </CardTitle>
+              </div>
+            </div>
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
-        </CardFooter>
+        </CardHeader>
       </Card>
     </div>
   )

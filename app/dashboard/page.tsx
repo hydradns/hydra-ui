@@ -30,6 +30,7 @@ import { ActionButtons } from "@/components/action-buttons";
 import { SectionCards } from "@/components/section-cards";
 import { useEffect } from "react";
 import api from "@/lib/api";
+import { DashboardProvider } from "./DashboardProvider";
 
 export default function Page() {
   useEffect(() => {
@@ -70,21 +71,23 @@ export default function Page() {
               {/* Right side */}
               <ActionButtons />
             </header>
-            <div className="overflow-hidden">
-              <div className="@container/main flex flex-1 flex-col gap-2">
-                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <SectionCards />
+            <DashboardProvider>
+              <div className="overflow-hidden">
+                <div className="@container/main flex flex-1 flex-col gap-2">
+                  <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                    <SectionCards />
+                  </div>
+                </div>
+                <div className="grid auto-rows-min @2xl:grid-cols-2 *:-ms-px *:-mt-px -m-px">
+                  <Chart01 />
+                  <Chart02 />
+                  <Chart03 />
+                  <Chart04 />
+                  <Chart05 />
+                  <Chart06 />
                 </div>
               </div>
-              <div className="grid auto-rows-min @2xl:grid-cols-2 *:-ms-px *:-mt-px -m-px">
-                <Chart01 />
-                <Chart02 />
-                <Chart03 />
-                <Chart04 />
-                <Chart05 />
-                <Chart06 />
-              </div>
-            </div>
+            </DashboardProvider>
           </div>
         </div>
       </SidebarInset>

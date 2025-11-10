@@ -26,6 +26,7 @@ import {
   RiLinksLine,
   RiDatabase2Line,
 } from "@remixicon/react";
+import { BrainCog, ServerCog } from "lucide-react";
 
 // This is sample data.
 const data = {
@@ -48,7 +49,7 @@ const data = {
         {
           title: "DNS Engine",
           url: "#",
-          icon: RiLeafLine,
+          icon: BrainCog,
         },
         {
           title: "Policies",
@@ -65,11 +66,11 @@ const data = {
           url: "#",
           icon: RiGeminiLine,
         },
-        {
-          title: "Settings",
-          url: "#",
-          icon: RiCodeSSlashLine,
-        },
+        // {
+        //   title: "Settings",
+        //   url: "#",
+        //   icon: RiCodeSSlashLine,
+        // },
       ],
     },
   ],
