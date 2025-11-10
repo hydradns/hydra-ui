@@ -1,8 +1,9 @@
+"use client"
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
+// export const metadata: Metadata = {
+//   title: "Dashboard",
+// };
 
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -27,8 +28,17 @@ import { Chart05 } from "@/components/chart-05";
 import { Chart06 } from "@/components/chart-06";
 import { ActionButtons } from "@/components/action-buttons";
 import { SectionCards } from "@/components/section-cards";
+import { useEffect } from "react";
+import api from "@/lib/api";
 
 export default function Page() {
+  useEffect(() => {
+    api.get("/dashboard/summary").then((response) => {
+      console.log("Dashboard summary data:", response.data);
+    }).catch((error) => {
+      console.error("Error fetching dashboard summary data:", error);
+    });
+  }, [])
   return (
     <SidebarProvider>
       <AppSidebar />
