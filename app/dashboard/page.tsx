@@ -69,7 +69,7 @@ export default function Page() {
                 </div>
               </div>
               {/* Right side */}
-              <ActionButtons />
+              {/* <ActionButtons /> */}
             </header>
             <DashboardProvider>
               <div className="overflow-hidden">
