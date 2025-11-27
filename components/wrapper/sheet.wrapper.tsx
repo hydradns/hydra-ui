@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet"
 import { RiAddLine } from "@remixicon/react"
 
-export function SheetWrapper({ triggerText, header, description, children }: { triggerText: string, header: string, description: string, children: React.ReactNode }) {
+export function SheetWrapper({ triggerText, header, description, children, formId }: { triggerText: string, header: string, description: string, children: React.ReactNode, formId?: string }) {
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -35,7 +35,8 @@ export function SheetWrapper({ triggerText, header, description, children }: { t
                 </SheetHeader>
                 {children}
                 <SheetFooter>
-                    <Button type="submit">Save changes</Button>
+                    {/* If a formId is provided, set the form attribute so this button submits that form */}
+                    <Button type="submit" {...(formId ? { form: formId } : {})}>Save changes</Button>
                     <SheetClose asChild>
                         <Button variant="outline">Close</Button>
                     </SheetClose>

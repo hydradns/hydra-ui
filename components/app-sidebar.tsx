@@ -54,17 +54,17 @@ const data = {
         },
         {
           title: "Policies",
-          url: "#",
+          url: "/policies",
           icon: RiNavigationLine,
         },
         {
           title: "Blocklists",
-          url: "#",
+          url: "/blocklists",
           icon: RiDatabase2Line,
         },
         {
           title: "Logs",
-          url: "#",
+          url: "/analytics",
           icon: RiGeminiLine,
         },
         // {
