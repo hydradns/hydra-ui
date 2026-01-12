@@ -1,4 +1,5 @@
 "use client"
+import { useDNSEngineData } from "@/app/dnsengine/useDNSEngineData";
 import {
   Card,
   CardDescription,
@@ -16,8 +17,7 @@ function CardIcon({ bgClass, children }: { bgClass: string; children: React.Reac
 }
 
 export function DNSEngineSectionCards() {
-  const data = {}
-
+  const { data } = useDNSEngineData();
   return (
     <>
       <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-2">
@@ -31,7 +31,7 @@ export function DNSEngineSectionCards() {
                 <div>
                   <CardDescription>DNS Upstreaming</CardDescription>
                   <CardTitle className="text-2xl font-semibold text-white tabular-nums @[250px]/card:text-3xl">
-                    {(data?.total_queries ?? "Enabled").toLocaleString()}
+                    {(data?.accepting_queries ? "Enabled" : "Disabled")}
                   </CardTitle>
                 </div>
               </div>
