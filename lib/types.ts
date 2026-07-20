@@ -145,3 +145,83 @@ export interface BypassAttemptsData {
   unique_clients: number
   attempts: BypassAttempt[]
 }
+
+// RBAC — Users
+export type UserRole = "admin" | "operator" | "read_only"
+
+export interface User {
+  id: string
+  username: string
+  role: UserRole
+  enabled: boolean
+  created_at: string
+  updated_at: string
+  last_login_at?: string
+}
+
+export interface UserListData {
+  total_users: number
+  users: User[]
+}
+
+export interface CreateUserRequest {
+  username: string
+  password: string
+  role: UserRole
+}
+
+export interface UpdateUserRequest {
+  role?: UserRole
+  password?: string
+  enabled?: boolean
+}
+
+// RBAC — API tokens (scoped to a user)
+export interface Token {
+  id: string
+  name: string
+  prefix: string
+  role: UserRole
+  revoked: boolean
+  created_at: string
+  last_used_at?: string
+  expires_at?: string
+}
+
+export interface CreateTokenRequest {
+  name: string
+  expires_in_days?: number
+}
+
+// The plaintext secret is only ever returned once, on create/rotate.
+export interface TokenSecret {
+  token: Token
+  secret: string
+}
+
+// RBAC — Audit log
+export interface AuditEvent {
+  id: string
+  actor: string
+  action: string
+  target: string
+  target_type?: string
+  before: Record<string, unknown> | null
+  after: Record<string, unknown> | null
+  ip: string
+  timestamp: string
+}
+
+export interface AuditListData {
+  total: number
+  page: number
+  page_size: number
+  events: AuditEvent[]
+}
+
+export interface AuditQuery {
+  page?: number
+  page_size?: number
+  actor?: string
+  action?: string
+}
