@@ -11,6 +11,15 @@ import type {
   Policy,
   CreatePolicyRequest,
   QueryLogEntry,
+  UserListData,
+  User,
+  CreateUserRequest,
+  UpdateUserRequest,
+  Token,
+  CreateTokenRequest,
+  TokenSecret,
+  AuditListData,
+  AuditQuery,
 } from "./types"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
@@ -113,3 +122,53 @@ export const deletePolicy = (id: string) =>
 // Query Logs
 export const getQueryLogs = () =>
   request<QueryLogEntry[]>("/analytics/audits")
+
+// Users (RBAC)
+export const getUsers = () =>
+  request<UserListData>("/users")
+
+export const createUser = (data: CreateUserRequest) =>
+  request<User>("/users", {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+
+export const updateUser = (id: string, data: UpdateUserRequest) =>
+  request<User>(`/users/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  })
+
+export const deleteUser = (id: string) =>
+  request<Record<string, unknown>>(`/users/${id}`, { method: "DELETE" })
+
+// Per-user API tokens
+export const getUserTokens = (userId: string) =>
+  request<Token[]>(`/users/${userId}/tokens`)
+
+export const createUserToken = (userId: string, data: CreateTokenRequest) =>
+  request<TokenSecret>(`/users/${userId}/tokens`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+
+export const rotateUserToken = (userId: string, tokenId: string) =>
+  request<TokenSecret>(`/users/${userId}/tokens/${tokenId}/rotate`, {
+    method: "POST",
+  })
+
+export const revokeUserToken = (userId: string, tokenId: string) =>
+  request<Record<string, unknown>>(`/users/${userId}/tokens/${tokenId}`, {
+    method: "DELETE",
+  })
+
+// Audit log
+export const getAuditEvents = (params: AuditQuery = {}) => {
+  const query = new URLSearchParams()
+  if (params.page) query.set("page", String(params.page))
+  if (params.page_size) query.set("page_size", String(params.page_size))
+  if (params.actor) query.set("actor", params.actor)
+  if (params.action) query.set("action", params.action)
+  const qs = query.toString()
+  return request<AuditListData>(`/audit${qs ? `?${qs}` : ""}`)
+}
