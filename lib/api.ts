@@ -11,6 +11,7 @@ import type {
   Policy,
   CreatePolicyRequest,
   QueryLogEntry,
+  BypassAttemptsData,
 } from "./types"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
@@ -113,3 +114,7 @@ export const deletePolicy = (id: string) =>
 // Query Logs
 export const getQueryLogs = () =>
   request<QueryLogEntry[]>("/analytics/audits")
+
+// Encrypted-DNS bypass attempts (clients trying to evade filtering via DoH/DoT/DoQ)
+export const getBypassAttempts = () =>
+  request<BypassAttemptsData>("/analytics/bypass")
