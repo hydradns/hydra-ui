@@ -121,3 +121,27 @@ export interface AnalyticsSummary {
   allowed_queries: number
   block_rate_percent: number
 }
+
+// Encrypted-DNS bypass attempts (DoH / DoT / DoQ)
+// A "bypass attempt" is a client trying to reach an encrypted-DNS resolver
+// directly so its queries never pass through HydraDNS filtering.
+export type BypassProtocol = "doh" | "dot" | "doq"
+
+export interface BypassAttempt {
+  client_ip: string
+  client_name?: string
+  protocol: BypassProtocol
+  // Resolver the client tried to reach, e.g. "cloudflare-dns.com".
+  target: string
+  attempts: number
+  // ISO timestamp of the most recent attempt.
+  last_attempt: string
+  // Whether HydraDNS successfully blocked the bypass.
+  blocked: boolean
+}
+
+export interface BypassAttemptsData {
+  total_attempts: number
+  unique_clients: number
+  attempts: BypassAttempt[]
+}
