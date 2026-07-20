@@ -114,6 +114,27 @@ export interface QueryLogEntry {
   threat_reason?: string
 }
 
+// Filters accepted by GET /analytics/logs (server-side pagination + filtering).
+// Empty/undefined fields are omitted from the query string.
+export interface QueryLogFilters {
+  client?: string
+  action?: string
+  domain?: string
+  suspicious?: boolean
+  start?: string // ISO-8601 lower bound (inclusive)
+  end?: string // ISO-8601 upper bound (inclusive)
+  page?: number
+  page_size?: number
+}
+
+// Paginated envelope returned by GET /analytics/logs.
+export interface QueryLogPage {
+  items: QueryLogEntry[]
+  total: number
+  page: number
+  page_size: number
+}
+
 // Analytics
 export interface AnalyticsSummary {
   total_queries: number

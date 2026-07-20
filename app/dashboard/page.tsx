@@ -13,7 +13,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { SectionCards } from "@/components/section-cards"
-import { getDashboardSummary, getDnsEngineStatus, getQueryLogs } from "@/lib/api"
+import { getDashboardSummary, getDnsEngineStatus, getRecentQueryLogs } from "@/lib/api"
 import type { DashboardSummary, DnsEngineStatus, QueryLogEntry } from "@/lib/types"
 import {
   AreaChart,
@@ -131,7 +131,7 @@ export default function DashboardPage() {
       const [s, e, l] = await Promise.all([
         getDashboardSummary(),
         getDnsEngineStatus(),
-        getQueryLogs(),
+        getRecentQueryLogs(),
       ])
       setSummary(s)
       setEngine(e)
