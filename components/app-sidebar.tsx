@@ -10,6 +10,7 @@ import {
   ShieldBan,
   ScrollText,
   ListOrdered,
+  Server,
   Settings,
 } from "lucide-react";
 
@@ -58,13 +59,18 @@ const data = {
           icon: ScrollText,
         },
         {
+          title: "Resolvers",
+          url: "/dashboard/resolvers",
+          icon: Server,
+        },
+        {
           title: "Query Logs",
           url: "/dashboard/logs",
           icon: ListOrdered,
         },
         {
           title: "Settings",
-          url: "#",
+          url: "/dashboard/settings",
           icon: Settings,
         },
       ],
