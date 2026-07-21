@@ -18,7 +18,7 @@ import { BypassPanel } from "@/components/bypass-panel"
 import {
   getDashboardSummary,
   getDnsEngineStatus,
-  getQueryLogs,
+  getRecentQueryLogs,
   getDnsMetrics,
   getBlocklists,
   getBypassAttempts,
@@ -150,7 +150,7 @@ export default function DashboardPage() {
       const [s, e, l] = await Promise.all([
         getDashboardSummary(),
         getDnsEngineStatus(),
-        getQueryLogs(),
+        getRecentQueryLogs(),
       ])
       setSummary(s)
       setEngine(e)

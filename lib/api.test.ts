@@ -12,6 +12,9 @@ import {
   getAuditEvents,
   getBypassAttempts,
   getDashboardSummary,
+  allowDomain,
+  blockDomain,
+  getQueryLogs,
 } from "@/lib/api"
 import type { ApiResponse, BypassAttemptsData, DashboardSummary } from "@/lib/types"
 
@@ -36,7 +39,7 @@ function fetchMock() {
   return vi.fn<typeof fetch>()
 }
 
-/** Stub global.fetch with a single JSON response envelope. */
+/** Stub global.fetch with a single JSON response envelope (typed). */
 function stubFetch<T>(body: ApiResponse<T>, status = 200) {
   const mock = vi.fn().mockResolvedValue({
     status,
@@ -44,6 +47,25 @@ function stubFetch<T>(body: ApiResponse<T>, status = 200) {
   })
   vi.stubGlobal("fetch", mock)
   return mock
+}
+
+// Query-log helpers wrap raw data in the success envelope.
+function jsonOk(data: unknown) {
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({ status: "success", data, error: null }),
+  } as unknown as Response
+}
+
+function stubFetchOk(data: unknown) {
+  const mock = vi.fn(() => Promise.resolve(jsonOk(data)))
+  vi.stubGlobal("fetch", mock)
+  return mock
+}
+
+function lastUrl(mock: ReturnType<typeof vi.fn>) {
+  return String(mock.mock.calls.at(-1)?.[0])
 }
 
 afterEach(() => {
@@ -262,5 +284,64 @@ describe("getDashboardSummary", () => {
 
     expect(result).toEqual(data)
     expect(mock.mock.calls[0][0]).toContain("/api/v1/dashboard/summary")
+  })
+})
+
+describe("getQueryLogs", () => {
+  it("hits /analytics/logs with default pagination when no filters are given", async () => {
+    const mock = stubFetchOk({ items: [], total: 0, page: 1, page_size: 50 })
+    await getQueryLogs()
+    const url = lastUrl(mock)
+    expect(url).toContain("/api/v1/analytics/logs")
+    expect(url).toContain("page=1")
+    expect(url).toContain("page_size=50")
+  })
+
+  it("serializes provided filters and omits empty / action=all", async () => {
+    const mock = stubFetchOk({ items: [], total: 0, page: 2, page_size: 50 })
+    await getQueryLogs({
+      domain: "evil",
+      client: "10.0.0.5",
+      action: "block",
+      suspicious: true,
+      page: 2,
+    })
+    const url = lastUrl(mock)
+    expect(url).toContain("domain=evil")
+    expect(url).toContain("client=10.0.0.5")
+    expect(url).toContain("action=block")
+    expect(url).toContain("suspicious=true")
+    expect(url).toContain("page=2")
+  })
+
+  it("does not emit action=all or a false suspicious flag", async () => {
+    const mock = stubFetchOk({ items: [], total: 0, page: 1, page_size: 50 })
+    await getQueryLogs({ action: "all", suspicious: false })
+    const url = lastUrl(mock)
+    expect(url).not.toContain("action=all")
+    expect(url).not.toContain("suspicious")
+  })
+})
+
+describe("allowDomain / blockDomain", () => {
+  it("allowDomain POSTs an ALLOW policy scoped to the domain", async () => {
+    const mock = stubFetchOk({ id: "quick-allow-evil-com" })
+    await allowDomain("evil.com")
+    const [url, opts] = mock.mock.calls.at(-1) as [string, RequestInit]
+    expect(String(url)).toContain("/api/v1/policies")
+    expect(opts.method).toBe("POST")
+    const body = JSON.parse(String(opts.body))
+    expect(body.action).toBe("ALLOW")
+    expect(body.domains).toEqual(["evil.com"])
+    expect(body.id).toBe("quick-allow-evil-com")
+  })
+
+  it("blockDomain POSTs a BLOCK policy scoped to the domain", async () => {
+    const mock = stubFetchOk({ id: "quick-block-evil-com" })
+    await blockDomain("evil.com")
+    const [, opts] = mock.mock.calls.at(-1) as [string, RequestInit]
+    const body = JSON.parse(String(opts.body))
+    expect(body.action).toBe("BLOCK")
+    expect(body.domains).toEqual(["evil.com"])
   })
 })
