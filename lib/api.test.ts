@@ -10,7 +10,10 @@ import {
   rotateUserToken,
   revokeUserToken,
   getAuditEvents,
+  getBypassAttempts,
+  getDashboardSummary,
 } from "@/lib/api"
+import type { ApiResponse, BypassAttemptsData, DashboardSummary } from "@/lib/types"
 
 const BASE = "http://localhost:8080/api/v1"
 
@@ -32,6 +35,21 @@ function errorResponse(message: string) {
 function fetchMock() {
   return vi.fn<typeof fetch>()
 }
+
+/** Stub global.fetch with a single JSON response envelope. */
+function stubFetch<T>(body: ApiResponse<T>, status = 200) {
+  const mock = vi.fn().mockResolvedValue({
+    status,
+    json: async () => body,
+  })
+  vi.stubGlobal("fetch", mock)
+  return mock
+}
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
 
 describe("api RBAC methods", () => {
   beforeEach(() => {
@@ -190,5 +208,59 @@ describe("api RBAC methods", () => {
     await expect(createUser({ username: "x", password: "y", role: "admin" })).rejects.toThrow(
       "forbidden: admin required",
     )
+  })
+})
+
+describe("getBypassAttempts", () => {
+  it("unwraps the data envelope and hits /analytics/bypass", async () => {
+    const data: BypassAttemptsData = {
+      total_attempts: 12,
+      unique_clients: 2,
+      attempts: [
+        {
+          client_ip: "10.0.0.5",
+          client_name: "kids-tablet",
+          protocol: "doh",
+          target: "cloudflare-dns.com",
+          attempts: 9,
+          last_attempt: "2026-07-19T10:00:00Z",
+          blocked: true,
+        },
+      ],
+    }
+    const mock = stubFetch<BypassAttemptsData>({ status: "success", data, error: null })
+
+    const result = await getBypassAttempts()
+
+    expect(result).toEqual(data)
+    expect(mock).toHaveBeenCalledTimes(1)
+    const calledUrl = mock.mock.calls[0][0] as string
+    expect(calledUrl).toContain("/api/v1/analytics/bypass")
+  })
+
+  it("throws the API error message when the envelope reports an error", async () => {
+    stubFetch<BypassAttemptsData>(
+      { status: "error", data: null as unknown as BypassAttemptsData, error: "bypass telemetry offline" },
+    )
+
+    await expect(getBypassAttempts()).rejects.toThrow("bypass telemetry offline")
+  })
+})
+
+describe("getDashboardSummary", () => {
+  it("returns the parsed summary payload", async () => {
+    const data: DashboardSummary = {
+      total_queries: 100,
+      blocked_queries: 10,
+      allowed_queries: 90,
+      redirected_queries: 0,
+      block_rate_percent: 10,
+    }
+    const mock = stubFetch<DashboardSummary>({ status: "success", data, error: null })
+
+    const result = await getDashboardSummary()
+
+    expect(result).toEqual(data)
+    expect(mock.mock.calls[0][0]).toContain("/api/v1/dashboard/summary")
   })
 })

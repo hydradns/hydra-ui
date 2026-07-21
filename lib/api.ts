@@ -20,6 +20,7 @@ import type {
   TokenSecret,
   AuditListData,
   AuditQuery,
+  BypassAttemptsData,
 } from "./types"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
@@ -172,3 +173,7 @@ export const getAuditEvents = (params: AuditQuery = {}) => {
   const qs = query.toString()
   return request<AuditListData>(`/audit${qs ? `?${qs}` : ""}`)
 }
+
+// Encrypted-DNS bypass attempts (clients trying to evade filtering via DoH/DoT/DoQ)
+export const getBypassAttempts = () =>
+  request<BypassAttemptsData>("/analytics/bypass")
