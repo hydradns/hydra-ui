@@ -43,6 +43,15 @@ export interface Resolver {
   protocol: string
 }
 
+export interface CreateResolverRequest {
+  id: string
+  name: string
+  address: string
+  protocol: string
+}
+
+export type UpdateResolverRequest = Partial<Omit<CreateResolverRequest, "id">>
+
 // Blocklists
 export interface Blocklist {
   id: string
@@ -70,6 +79,19 @@ export interface CreateBlocklistRequest {
   category?: string
 }
 
+export type UpdateBlocklistRequest = Partial<Omit<CreateBlocklistRequest, "id">> & {
+  enabled?: boolean
+}
+
+// Curated categories (bundled threat/content groups the operator can toggle)
+export interface Category {
+  id: string
+  name: string
+  description: string
+  enabled: boolean
+  domains_count: number
+}
+
 // Policies
 export interface Policy {
   id: string
@@ -81,6 +103,9 @@ export interface Policy {
   domains: string[]
   priority: number
   enabled: boolean
+  // Optional scheduling + client scoping (backend CRUD adds these)
+  schedule?: string
+  client_scope?: string
 }
 
 export interface PolicyListData {
@@ -99,6 +124,12 @@ export interface CreatePolicyRequest {
   redirect_ip?: string
   domains: string[]
   priority?: number
+  schedule?: string
+  client_scope?: string
+}
+
+export type UpdatePolicyRequest = Partial<Omit<CreatePolicyRequest, "id">> & {
+  enabled?: boolean
 }
 
 // Query Logs
@@ -225,3 +256,15 @@ export interface AuditQuery {
   actor?: string
   action?: string
 }
+
+// Settings (control-plane engine configuration)
+export interface Settings {
+  engine_enabled: boolean
+  block_page_enabled: boolean
+  cache_enabled: boolean
+  cache_ttl_seconds: number
+  upstream_timeout_ms: number
+  log_retention_days: number
+}
+
+export type UpdateSettingsRequest = Partial<Settings>

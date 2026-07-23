@@ -4,12 +4,17 @@ import type {
   DnsEngineStatus,
   DnsMetrics,
   Resolver,
+  CreateResolverRequest,
+  UpdateResolverRequest,
   BlocklistListData,
   Blocklist,
   CreateBlocklistRequest,
+  UpdateBlocklistRequest,
+  Category,
   PolicyListData,
   Policy,
   CreatePolicyRequest,
+  UpdatePolicyRequest,
   QueryLogEntry,
   BypassAttemptsData,
   UserListData,
@@ -21,6 +26,8 @@ import type {
   TokenSecret,
   AuditListData,
   AuditQuery,
+  Settings,
+  UpdateSettingsRequest,
 } from "./types"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
@@ -88,6 +95,21 @@ export const getDnsMetrics = () =>
 export const getResolvers = () =>
   request<Resolver[]>("/dns/resolvers")
 
+export const createResolver = (data: CreateResolverRequest) =>
+  request<Resolver>("/dns/resolvers", {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+
+export const updateResolver = (id: string, data: UpdateResolverRequest) =>
+  request<Resolver>(`/dns/resolvers/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  })
+
+export const deleteResolver = (id: string) =>
+  request<Record<string, unknown>>(`/dns/resolvers/${id}`, { method: "DELETE" })
+
 // Blocklists
 export const getBlocklists = () =>
   request<BlocklistListData>("/blocklists")
@@ -101,8 +123,30 @@ export const createBlocklist = (data: CreateBlocklistRequest) =>
     body: JSON.stringify(data),
   })
 
+export const updateBlocklist = (id: string, data: UpdateBlocklistRequest) =>
+  request<Blocklist>(`/blocklists/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  })
+
+export const toggleBlocklist = (id: string, enabled: boolean) =>
+  request<Blocklist>(`/blocklists/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ enabled }),
+  })
+
 export const deleteBlocklist = (id: string) =>
   request<Record<string, unknown>>(`/blocklists/${id}`, { method: "DELETE" })
+
+// Curated categories
+export const getCategories = () =>
+  request<Category[]>("/blocklists/categories")
+
+export const toggleCategory = (id: string, enabled: boolean) =>
+  request<Category>(`/blocklists/categories/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ enabled }),
+  })
 
 // Policies
 export const getPolicies = () =>
@@ -114,6 +158,12 @@ export const getPolicy = (id: string) =>
 export const createPolicy = (data: CreatePolicyRequest) =>
   request<Policy>("/policies", {
     method: "POST",
+    body: JSON.stringify(data),
+  })
+
+export const updatePolicy = (id: string, data: UpdatePolicyRequest) =>
+  request<Policy>(`/policies/${id}`, {
+    method: "PUT",
     body: JSON.stringify(data),
   })
 
@@ -177,3 +227,13 @@ export const getAuditEvents = (params: AuditQuery = {}) => {
   const qs = query.toString()
   return request<AuditListData>(`/audit${qs ? `?${qs}` : ""}`)
 }
+
+// Settings
+export const getSettings = () =>
+  request<Settings>("/settings")
+
+export const updateSettings = (data: UpdateSettingsRequest) =>
+  request<Settings>("/settings", {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  })
